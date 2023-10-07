@@ -1,0 +1,21 @@
+{
+    "name": "tgu/aksenov",
+    "autoload": {
+        "psr-4": {
+            "Tgu\\Aksenov\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "aksenov",
+            "email": "k.a.aksenov@utmn.ru"
+        }
+    ],
+    "require": {
+        "fakerphp/faker": "^1.23",
+        "symfony/polyfill-uuid": "^1.28"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
+    }
+}
