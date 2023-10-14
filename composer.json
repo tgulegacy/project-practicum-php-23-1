@@ -5,17 +5,29 @@
             "Tgu\\Aksenov\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tgu\\Aksenov\\Blog\\UnitTests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "aksenov",
             "email": "k.a.aksenov@utmn.ru"
         }
     ],
+    "scripts": {
+        "test": "phpunit tests --testdox --colors",
+        "test:coverage": "php -dxdebug.mode=coverage vendor/bin/phpunit tests --coverage-html coverage_report --coverage-filter src"
+    },
     "require": {
-        "fakerphp/faker": "^1.23",
-        "symfony/polyfill-uuid": "^1.28"
+        "symfony/polyfill-uuid": "^1.28",
+        "ext-pdo": "*",
+        "php": "^8.2"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest"
+        "fakerphp/faker": "^1.23",
+        "roave/security-advisories": "dev-latest",
+        "phpunit/phpunit": "10"
     }
 }
