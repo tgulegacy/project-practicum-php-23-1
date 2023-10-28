@@ -1,13 +1,12 @@
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
-
 use Tgu\Aksenov\Blog\Exceptions\HttpException;
 use Tgu\Aksenov\Blog\Http\Actions\Users\CreateUser;
 use Tgu\Aksenov\Blog\Http\Actions\Users\FindByUsername;
 use Tgu\Aksenov\Blog\Http\ErrorResponse;
 use Tgu\Aksenov\Blog\Http\Request;
-use Tgu\Aksenov\Blog\Repositories\UserRepository\SqliteUsersRepository;
+
+$container = require __DIR__ . '/bootstrap.php';
 
 $request = new Request($_GET, $_SERVER, file_get_contents('php://input'));
 
@@ -27,18 +26,10 @@ try {
 
 $routes = [
 	'GET' => [
-		'/users/show' => new FindByUsername(
-			new SqliteUsersRepository(
-				new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-			)
-		),
+		'/users/show' => FindByUsername::class,
 	],
 	'POST' => [
-		'/users/create' => new CreateUser(
-			new SqliteUsersRepository(
-				new PDO('sqlite:' . __DIR__ . '/blog.sqlite')
-			)
-		),
+		'/users/create' => CreateUser::class
 	]
 ];
 
@@ -52,7 +43,9 @@ if (!array_key_exists($path, $routes[$method])) {
 	return;
 }
 
-$action = $routes[$method][$path];
+$actionClassName = $routes[$method][$path];
+
+$action = $container->get($actionClassName);
 
 try {
 	$response = $action->handle($request);
