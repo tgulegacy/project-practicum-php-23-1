@@ -84,6 +84,7 @@ class FindByUsernameTest extends TestCase
 			new User(
 				UUID::random(),
 				'ivan123',
+				'12345',
 				new Name('Ivan', 'Ivanov'),	
 			)
 		]);
@@ -111,6 +112,7 @@ class FindByUsernameTest extends TestCase
 			new User(
 				UUID::random(),
 				'ivan',
+				'12345',
 				new Name('Ivan', 'Ivanov'),	
 			)
 		]);

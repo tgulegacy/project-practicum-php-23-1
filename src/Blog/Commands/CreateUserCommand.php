@@ -34,18 +34,18 @@ class CreateUserCommand
 			return;
 		}
 
-		$uuid = UUID::random();
-
-		$this->userRepository->save(new User(
-			$uuid,
+		$user = User::createFrom(
 			$username,
+			$arguments->get('password'),
 			new Name(
 				$arguments->get('first_name'),
 			 $arguments->get('last_name')
 			)
-		));
+		);
 
-		$this->logger->info("User created: $uuid");
+		$this->userRepository->save($user);
+
+		$this->logger->info("User created: " . $user->getUuid());
 	}
 
 	public function userExisit(string $username): bool

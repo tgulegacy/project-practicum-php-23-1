@@ -46,7 +46,7 @@ class CreateUserCommandTest extends TestCase
 		$this->expectException(CommandException::class);
 		$this->expectExceptionMessage('User already exists: Ivan');
 
-		$command->handle(new Arguments(['username' => 'Ivan']));
+		$command->handle(new Arguments(['username' => 'Ivan', 'password' => '12345']));
 	}
 
 	public function testItRequiresFirstName(): void
@@ -59,7 +59,7 @@ class CreateUserCommandTest extends TestCase
 		$this->expectException(ArgumentsException::class);
 		$this->expectExceptionMessage('No such argument: first_name');
 
-		$command->handle(new Arguments(['username' => 'Ivan']));
+		$command->handle(new Arguments(['username' => 'Ivan', 'password' => '12345']));
 	}
 
 	public function testItRequiresLastName(): void
@@ -72,7 +72,7 @@ class CreateUserCommandTest extends TestCase
 		$this->expectException(ArgumentsException::class);
 		$this->expectExceptionMessage('No such argument: last_name');
 
-		$command->handle(new Arguments(['username' => 'Ivan', 'first_name' => 'Ivan']));
+		$command->handle(new Arguments(['username' => 'Ivan', 'first_name' => 'Ivan', 'password' => '12345']));
 	}
 
 	public function testItSavesUserToRepository(): void
@@ -110,8 +110,22 @@ class CreateUserCommandTest extends TestCase
 			'username' => 'Ivan', 
 			'first_name' => 'Ivan',
 			'last_name' => 'Ivanov',
+			'password' => '12345'
 		]));
 
 		$this->assertTrue($usersRepository->wasCalled());
+	}
+
+	public function testItPequiewsPassword(): void
+	{
+		$command = new CreateUserCommand(
+			$this->makeUserRepository(),
+			new DummyLogger
+		);
+
+		$this->expectException(ArgumentsException::class);
+		$this->expectExceptionMessage('No such argument: password');
+
+		$command->handle(new Arguments(['username' => 'Ivan']));
 	}
 }

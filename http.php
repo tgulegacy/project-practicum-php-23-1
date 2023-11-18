@@ -2,6 +2,7 @@
 
 use Psr\Log\LoggerInterface;
 use Tgu\Aksenov\Blog\Exceptions\HttpException;
+use Tgu\Aksenov\Blog\Http\Actions\Auth\Login;
 use Tgu\Aksenov\Blog\Http\Actions\Posts\CreatePost;
 use Tgu\Aksenov\Blog\Http\Actions\Users\CreateUser;
 use Tgu\Aksenov\Blog\Http\Actions\Users\FindByUsername;
@@ -37,6 +38,7 @@ $routes = [
 	'POST' => [
 		'/users/create' => CreateUser::class,
 		'/posts/create' => CreatePost::class,
+		'/login' => Login::class,
 	]
 ];
 

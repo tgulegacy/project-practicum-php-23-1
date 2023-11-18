@@ -6,8 +6,13 @@ use Monolog\Level;
 use Psr\Log\LoggerInterface;
 use Monolog\Handler\StreamHandler;
 use Tgu\Aksenov\Blog\Container\DIContainer;
-use Tgu\Aksenov\Blog\Http\Auth\IdentificationInterface;
-use Tgu\Aksenov\Blog\Http\Auth\JsonBodyUuidIdentification;
+use Tgu\Aksenov\Blog\Http\Auth\AuthenticationInterface;
+use Tgu\Aksenov\Blog\Http\Auth\BearerTokenAuthentication;
+use Tgu\Aksenov\Blog\Http\Auth\PasswordAuthentication;
+use Tgu\Aksenov\Blog\Http\Auth\PasswordAuthenticationInterface;
+use Tgu\Aksenov\Blog\Http\Auth\TokenAuthenticationInterface;
+use Tgu\Aksenov\Blog\Repositories\AuthTokenRepository\AuthTokenRepositoryInterface;
+use Tgu\Aksenov\Blog\Repositories\AuthTokenRepository\SqliteAuthTokenREpository;
 use Tgu\Aksenov\Blog\Repositories\PostsRepository\PostsRepositoryInterface;
 use Tgu\Aksenov\Blog\Repositories\PostsRepository\SqlitePostsRepository;
 use Tgu\Aksenov\Blog\Repositories\UserRepository\SqliteUsersRepository;
@@ -26,7 +31,11 @@ $container->bind(UserRepositoryInterface::class, SqliteUsersRepository::class);
 
 $container->bind(PostsRepositoryInterface::class, SqlitePostsRepository::class);
 
-$container->bind(IdentificationInterface::class, JsonBodyUuidIdentification::class);
+$container->bind(PasswordAuthenticationInterface::class, PasswordAuthentication::class);
+
+$container->bind(AuthTokenRepositoryInterface::class, SqliteAuthTokenREpository::class);
+
+$container->bind(TokenAuthenticationInterface::class, BearerTokenAuthentication::class);
 
 $logger = (new Logger('blog'));
 

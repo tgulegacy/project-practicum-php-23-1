@@ -2,17 +2,15 @@
 
 namespace Tgu\Aksenov\Blog\Http\Auth;
 
-use InvalidArgumentException;
 use Tgu\Aksenov\Blog\Exceptions\AuthException;
 use Tgu\Aksenov\Blog\Exceptions\HttpException;
+use Tgu\Aksenov\Blog\Exceptions\InvalidArgumentException;
 use Tgu\Aksenov\Blog\Exceptions\UserNotFoundException;
-use Tgu\Aksenov\Blog\Http\Auth\IdentificationInterface;
 use Tgu\Aksenov\Blog\Http\Request;
 use Tgu\Aksenov\Blog\Repositories\UserRepository\UserRepositoryInterface;
 use Tgu\Aksenov\Blog\User;
-use Tgu\Aksenov\Blog\UUID;
 
-class JsonBodyUuidIdentification implements IdentificationInterface
+class PasswordAuthentication implements PasswordAuthenticationInterface
 {
 	public function __construct(
 		private UserRepositoryInterface $userRepository
@@ -30,9 +28,23 @@ class JsonBodyUuidIdentification implements IdentificationInterface
 		}
 
 		try {
-			return $this->userRepository->getByUsername($username);
+			$user = $this->userRepository->getByUsername($username);
 		} catch (UserNotFoundException $error) {
 			throw new AuthException($error->getMessage());
 		}
+
+		try {
+			$password = $request->jsonBodyField('password');
+		} catch (HttpException $error) {
+			throw new AuthException($error->getMessage());
+		}
+
+		$hash = hash('sha256', $password);
+
+		if (!$user->chackPassword($password)) {
+			throw new AuthException('Wrong password');
+		}
+
+		return $user;
 	}
 }
