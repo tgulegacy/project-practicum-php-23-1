@@ -1,6 +1,8 @@
 <?php
 
+use Psr\Log\LoggerInterface;
 use Tgu\Aksenov\Blog\Exceptions\HttpException;
+use Tgu\Aksenov\Blog\Http\Actions\Posts\CreatePost;
 use Tgu\Aksenov\Blog\Http\Actions\Users\CreateUser;
 use Tgu\Aksenov\Blog\Http\Actions\Users\FindByUsername;
 use Tgu\Aksenov\Blog\Http\ErrorResponse;
@@ -10,9 +12,12 @@ $container = require __DIR__ . '/bootstrap.php';
 
 $request = new Request($_GET, $_SERVER, file_get_contents('php://input'));
 
+$logger = $container->get(LoggerInterface::class);
+
 try {
 	$path = $request->path();
 } catch (HttpException) {
+	$logger->warning($error->getMessage());
 	(new ErrorResponse)->send();
 	return;
 }
@@ -20,6 +25,7 @@ try {
 try {
 	$method = $request->method();
 } catch (HttpException) {
+	$logger->warning($error->getMessage());
 	(new ErrorResponse)->send();
 	return;
 }
@@ -29,17 +35,15 @@ $routes = [
 		'/users/show' => FindByUsername::class,
 	],
 	'POST' => [
-		'/users/create' => CreateUser::class
+		'/users/create' => CreateUser::class,
+		'/posts/create' => CreatePost::class,
 	]
 ];
 
-if (!array_key_exists($method, $routes)) {
-	(new ErrorResponse('Not found'))->send();
-	return;
-}
-
-if (!array_key_exists($path, $routes[$method])) {
-	(new ErrorResponse('Not found'))->send();
+if (!array_key_exists($method, $routes) || !array_key_exists($path, $routes[$method])) {
+	$message = "Route not found: $method $path";
+	$logger->notice($message);
+	(new ErrorResponse($message))->send();
 	return;
 }
 
@@ -50,7 +54,8 @@ $action = $container->get($actionClassName);
 try {
 	$response = $action->handle($request);
 } catch (Exception $error) {
-	(new ErrorResponse($error->getMessage()))->send();
+	$logger->error($error->getMessage(), ['exception' => $error]);
+	(new ErrorResponse)->send();
 }
 
 $response->send();

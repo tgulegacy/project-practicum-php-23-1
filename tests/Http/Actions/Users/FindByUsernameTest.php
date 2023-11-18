@@ -10,6 +10,7 @@ use Tgu\Aksenov\Blog\Http\Request;
 use Tgu\Aksenov\Blog\Http\SuccessfulResponse;
 use Tgu\Aksenov\Blog\Repositories\UserRepository\UserRepositoryInterface;
 use Tgu\Aksenov\Blog\Person\Name;
+use Tgu\Aksenov\Blog\UnitTests\DummyLogger;
 use Tgu\Aksenov\Blog\User;
 use Tgu\Aksenov\Blog\UUID;
 
@@ -60,7 +61,7 @@ class FindByUsernameTest extends TestCase
 
 		$userRepsitory = $this->uesrsRepository([]);
 
-		$action = new FindByUsername($userRepsitory);
+		$action = new FindByUsername($userRepsitory, new DummyLogger);
 
 		$response = $action->handle($request);
 
@@ -87,7 +88,7 @@ class FindByUsernameTest extends TestCase
 			)
 		]);
 
-		$action = new FindByUsername($userRepsitory);
+		$action = new FindByUsername($userRepsitory, new DummyLogger);
 
 		$response = $action->handle($request);
 
@@ -114,7 +115,7 @@ class FindByUsernameTest extends TestCase
 			)
 		]);
 
-		$action = new FindByUsername($userRepsitory);
+		$action = new FindByUsername($userRepsitory, new DummyLogger);
 
 		$response = $action->handle($request);
 

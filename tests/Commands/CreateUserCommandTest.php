@@ -10,6 +10,7 @@ use Tgu\Aksenov\Blog\Exceptions\CommandException;
 use Tgu\Aksenov\Blog\Exceptions\UserNotFoundException;
 use Tgu\Aksenov\Blog\Repositories\UserRepository\DummyUsersRepository;
 use Tgu\Aksenov\Blog\Repositories\UserRepository\UserRepositoryInterface;
+use Tgu\Aksenov\Blog\UnitTests\DummyLogger;
 use Tgu\Aksenov\Blog\User;
 use Tgu\Aksenov\Blog\UUID;
 
@@ -38,7 +39,8 @@ class CreateUserCommandTest extends TestCase
 	public function testItThrowsAnExceptionWhenUserAlreadyExists(): void
 	{
 		$command = new CreateUserCommand(
-			new DummyUsersRepository()
+			new DummyUsersRepository(),
+			new DummyLogger
 		);
 
 		$this->expectException(CommandException::class);
@@ -50,7 +52,8 @@ class CreateUserCommandTest extends TestCase
 	public function testItRequiresFirstName(): void
 	{
 		$command = new CreateUserCommand(
-			$this->makeUserRepository()
+			$this->makeUserRepository(),
+			new DummyLogger
 		);
 
 		$this->expectException(ArgumentsException::class);
@@ -62,7 +65,8 @@ class CreateUserCommandTest extends TestCase
 	public function testItRequiresLastName(): void
 	{
 		$command = new CreateUserCommand(
-			$this->makeUserRepository()
+			$this->makeUserRepository(),
+			new DummyLogger
 		);
 
 		$this->expectException(ArgumentsException::class);
@@ -98,7 +102,8 @@ class CreateUserCommandTest extends TestCase
 		};
 
 		$command = new CreateUserCommand(
-			$usersRepository
+			$usersRepository,
+			new DummyLogger
 		);
 
 		$command->handle(new Arguments([

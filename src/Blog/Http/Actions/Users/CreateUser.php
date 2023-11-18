@@ -2,6 +2,7 @@
 
 namespace Tgu\Aksenov\Blog\Http\Actions\Users;
 
+use Psr\Log\LoggerInterface;
 use Tgu\Aksenov\Blog\Exceptions\HttpException;
 use Tgu\Aksenov\Blog\Http\Actions\ActionInterface;
 use Tgu\Aksenov\Blog\Http\ErrorResponse;
@@ -16,15 +17,17 @@ use Tgu\Aksenov\Blog\UUID;
 class CreateUser implements ActionInterface
 {
   public function __construct(
-    private UserRepositoryInterface $usersRepository
+    private UserRepositoryInterface $usersRepository,
+    private LoggerInterface $logger
   )
   {
   }
 
   public function handle(Request $request): Response
   {
+    $newUserUuid = UUID::random();
+
     try {
-      $newUserUuid = UUID::random();
       $user = new User(
         $newUserUuid,
 				$request->jsonBodyField('username'),
@@ -38,6 +41,8 @@ class CreateUser implements ActionInterface
     }
 
     $this->usersRepository->save($user);
+
+    $this->logger->info("User created: $newUserUuid");
 
     return new SuccessfulResponse([
       'uuid' => (string)$newUserUuid

@@ -2,6 +2,7 @@
 
 namespace Tgu\Aksenov\Blog\Commands;
 
+use Psr\Log\LoggerInterface;
 use Tgu\Aksenov\Blog\Exceptions\CommandException;
 use Tgu\Aksenov\Blog\Exceptions\UserNotFoundException;
 use Tgu\Aksenov\Blog\Person\Name;
@@ -13,6 +14,7 @@ class CreateUserCommand
 {
 	public function __construct(
 		private UserRepositoryInterface $userRepository,
+		private LoggerInterface $logger,
 	)
 	{
 		
@@ -20,22 +22,30 @@ class CreateUserCommand
 
 	public function handle(Arguments $arguments): void
 	{
+		$this->logger->info("Create user commant started");
+
 		$username = $arguments->get('username');
 
 		if ($this->userExisit($username)) {
 			throw new CommandException(
 				"User already exists: $username"
 			);
+			$this->logger->warning("User already exists: $username");
+			return;
 		}
 
+		$uuid = UUID::random();
+
 		$this->userRepository->save(new User(
-			UUID::random(),
+			$uuid,
 			$username,
 			new Name(
 				$arguments->get('first_name'),
 			 $arguments->get('last_name')
 			)
 		));
+
+		$this->logger->info("User created: $uuid");
 	}
 
 	public function userExisit(string $username): bool

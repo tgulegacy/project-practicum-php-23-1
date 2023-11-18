@@ -2,6 +2,7 @@
 
 namespace Tgu\Aksenov\Blog\Http\Actions\Users;
 
+use Psr\Log\LoggerInterface;
 use Tgu\Aksenov\Blog\Exceptions\HttpException;
 use Tgu\Aksenov\Blog\Exceptions\UserNotFoundException;
 use Tgu\Aksenov\Blog\Http\Actions\ActionInterface;
@@ -14,7 +15,8 @@ use Tgu\Aksenov\Blog\Repositories\UserRepository\UserRepositoryInterface;
 class FindByUsername implements ActionInterface
 {
 	public function __construct(
-		private UserRepositoryInterface $userRepository
+		private UserRepositoryInterface $userRepository,
+		private LoggerInterface $logger
 	)
 	{
 		
@@ -33,6 +35,8 @@ class FindByUsername implements ActionInterface
 		} catch (UserNotFoundException $error) {
 			return new ErrorResponse($error->getMessage());
 		}
+
+		$this->logger->info("User find: $username");
 
 		return new SuccessfulResponse([
 			'username' => $user->getUsername(),

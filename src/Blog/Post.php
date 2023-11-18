@@ -1,17 +1,51 @@
 <?php
 namespace Tgu\Aksenov\Blog;
 
-use Tgu\Aksenov\Blog\Person\Person;
+class Post
+{
+    public function __construct(
+        private UUID $uuid,
+        private UUID $userUuid,
+        private string $title,
+        private string $text,
+    )
+    {
+    }
 
-class Post {
-	public function __construct(
-		private Person $author,
-		private string $text
-	)
-	{}
+    public function __toString(): string
+    {
+        return $this->userUuid . ' пишет: ' . PHP_EOL . $this->title . PHP_EOL . $this->text;
+    }
 
-	public function __toString()
-	{
-		return $this->author . ' пишет: ' . $this->text;
-	}
+    /**
+     * @return UUID
+     */
+    public function getUuid(): UUID
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUserUuid(): UUID
+    {
+        return $this->userUuid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getText(): string
+    {
+        return $this->text;
+    }
 }
